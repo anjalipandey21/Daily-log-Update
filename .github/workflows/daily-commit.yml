@@ -2,28 +2,24 @@ name: Daily Commit
 
 on:
   schedule:
-    - cron: "0 11 * * *"   # runs every day at 11:00 UTC
-  workflow_dispatch:        # lets you run it manually
-
-permissions:
-  contents: write
+    - cron: "0 10 * * *"   # runs every day at 10 AM
+  workflow_dispatch:
 
 jobs:
-  daily-commit:
+  update:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Update log file
-        run: |
-          echo "$(date -u) - Automated daily log entry" >> log.md
+    - name: Make daily update
+      run: |
+        echo "Update on $(date)" >> daily_log.md
 
-      - name: Commit and push changes
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git add log.md
-          git commit -m "chore: daily log update" || echo "Nothing to commit."
-          git push
+    - name: Commit changes
+      run: |
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "your-github-username"
+        git add .
+        git commit -m "Daily update: $(date)"
+        git push
